@@ -1,0 +1,98 @@
+# =====================================================
+# Data Configuration
+# Defines data sources and feature engineering
+# =====================================================
+
+# Primary Stock
+primary_stock:
+  ticker: "GS"  # Goldman Sachs
+  name: "Goldman Sachs"
+
+# Date Range
+date_range:
+  start_date: "2010-01-01"
+  end_date: "2023-12-31"
+
+# Correlated Assets
+correlated_assets:
+  # Financial Institutions
+  financials:
+    - JPM    # JP Morgan Chase
+    - MS     # Morgan Stanley
+    - BAC    # Bank of America
+    - C      # Citigroup
+    - WFC    # Wells Fargo
+  
+  # Market Indices
+  indices:
+    - ^GSPC  # S&P 500
+    - ^DJI   # Dow Jones
+    - ^IXIC  # NASDAQ
+    - ^FTSE  # FTSE 100
+    - ^N225  # Nikkei 225
+  
+  # Volatility
+  volatility:
+    - ^VIX   # VIX Index
+  
+  # Currencies
+  currencies:
+    - EURUSD=X
+    - GBPUSD=X
+    - JPYUSD=X
+  
+  # Commodities
+  commodities:
+    - GC=F   # Gold
+    - CL=F   # Crude Oil
+
+# Feature Engineering
+features:
+  # Technical Indicators
+  technical_indicators:
+    enabled: true
+    indicators:
+      - moving_average
+      - exponential_moving_average
+      - macd
+      - rsi
+      - bollinger_bands
+      - atr
+      - obv
+      - momentum
+      - roc
+  
+  # Fourier Transforms
+  fourier:
+    enabled: true
+    n_components: [3, 6, 9, 50]
+  
+  # ARIMA Features
+  arima:
+    enabled: false  # Slow, enable only if needed
+    order: [5, 1, 0]
+    window_size: 100
+  
+  # Lag Features
+  lag_features:
+    enabled: true
+    lags: [1, 2, 3, 5, 10]
+  
+  # Rolling Statistics
+  rolling_stats:
+    enabled: true
+    windows: [5, 10, 20, 50]
+
+# Data Preprocessing
+preprocessing:
+  scaling_method: "standard"  # Options: standard, minmax, robust
+  handle_outliers: true
+  outlier_std: 3.0
+  fill_method: "forward_fill"  # Options: forward_fill, interpolate
+  
+# Data Storage
+data_paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  predictions: "data/predictions"
+  cache_enabled: true

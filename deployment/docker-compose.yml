@@ -1,0 +1,98 @@
+# ==========================================
+# Docker Compose for Stock Market GAN
+# Full stack deployment with services
+# ==========================================
+
+version: '3.8'
+
+services:
+  # Main application
+  stock-gan:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    image: stock-gan:latest
+    container_name: stock-gan-app
+    volumes:
+      - ../data:/app/data
+      - ../models:/app/models
+      - ../logs:/app/logs
+      - ../configs:/app/configs
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mlflow
+      - postgres
+    networks:
+      - stock-gan-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # MLflow tracking server
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: stock-gan-mlflow
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql://mlflow:mlflow@postgres:5432/mlflow --default-artifact-root /mlflow/artifacts
+    volumes:
+      - mlflow-artifacts:/mlflow/artifacts
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - stock-gan-network
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:15-alpine
+    container_name: stock-gan-postgres
+    environment:
+      - POSTGRES_USER=mlflow
+      - POSTGRES_PASSWORD=mlflow
+      - POSTGRES_DB=mlflow
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - stock-gan-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mlflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Jupyter notebook (optional, for experimentation)
+  jupyter:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    image: stock-gan:latest
+    container_name: stock-gan-jupyter
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    volumes:
+      - ../notebooks:/app/notebooks
+      - ../data:/app/data
+      - ../models:/app/models
+    ports:
+      - "8888:8888"
+    networks:
+      - stock-gan-network
+
+volumes:
+  postgres-data:
+  mlflow-artifacts:
+
+networks:
+  stock-gan-network:
+    driver: bridge

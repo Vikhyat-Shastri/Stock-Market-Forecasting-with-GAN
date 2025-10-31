@@ -1,0 +1,48 @@
+# =====================================================
+# Training Configuration
+# Defines training process parameters
+# =====================================================
+
+# Training Settings
+training:
+  epochs: 200
+  batch_size: 64
+  num_workers: 4
+  seed: 42
+  device: "cuda"  # Options: cuda, cpu
+  mixed_precision: true  # Use automatic mixed precision
+  gradient_clip: 1.0
+
+# Data Split
+data_split:
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+
+# Checkpointing
+checkpoint:
+  save_dir: "models/checkpoints"
+  save_interval: 10  # Save every N epochs
+  keep_best: true
+  monitor_metric: "wasserstein_distance"
+
+# Early Stopping
+early_stopping:
+  enabled: true
+  patience: 20
+  min_delta: 0.0001
+  monitor_metric: "g_loss"
+
+# Logging
+logging:
+  level: "INFO"
+  log_dir: "logs"
+  tensorboard: true
+  mlflow: true
+
+# MLflow Tracking
+mlflow:
+  experiment_name: "stock_market_gan"
+  tracking_uri: "http://localhost:5000"
+  artifact_location: "mlruns"
+  log_models: true

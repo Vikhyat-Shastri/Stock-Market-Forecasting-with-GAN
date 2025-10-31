@@ -1,3 +1,7 @@
+# ==========================================
+# Stock Market GAN - Git Ignore
+# ==========================================
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -5,6 +9,29 @@ __pycache__/
 
 # C extensions
 *.so
+
+# Project specific
+data/raw/*
+data/processed/*
+data/predictions/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/predictions/.gitkeep
+
+models/checkpoints/*
+models/final/*
+!models/checkpoints/.gitkeep
+!models/final/.gitkeep
+
+logs/*
+!logs/.gitkeep
+
+mlruns/
+mlartifacts/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb
 
 # Distribution / packaging
 .Python

@@ -1,0 +1,40 @@
+# =====================================================
+# Model Configuration
+# Defines architecture and hyperparameters for GAN
+# =====================================================
+
+# Generator (LSTM) Configuration
+generator:
+  type: "lstm"  # Options: lstm, attention_lstm
+  noise_dim: 100
+  hidden_dim: 256
+  num_layers: 2
+  dropout: 0.2
+  bidirectional: false
+  sequence_length: 20
+
+# Discriminator (CNN) Configuration
+discriminator:
+  type: "cnn"  # Options: cnn, residual_cnn
+  base_filters: 64
+  num_conv_layers: 3
+  fc_hidden_dim: 128
+  dropout: 0.3
+  use_spectral_norm: false
+
+# WGAN-GP Configuration
+wgan:
+  lambda_gp: 10.0
+  n_critic: 5
+  
+# Optimization
+optimizer:
+  g_lr: 0.0001
+  d_lr: 0.0004
+  betas: [0.0, 0.9]
+
+# Learning Rate Scheduler
+scheduler:
+  type: "cosine"  # Options: cosine, step, plateau
+  min_lr: 0.00001
+  warmup_epochs: 5
